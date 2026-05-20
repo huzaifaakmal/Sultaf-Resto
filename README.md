@@ -1,64 +1,95 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Sultaf Restaurant - Online Ordering Demo
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A vintage-style Arabic dining website built for a school project. This application allows customers to browse authentic Middle Eastern cuisine, add items to a shopping cart, and simulate a QR-code based payment process.
 
-## About Laravel
+## 📍 Location
+**Address:** Jalan Malioboro No. 123, Kotagede, Yogyakarta, Indonesia  
+**Phone:** +62 812 3456 7890
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 🛒 Online Ordering System
+- **Real-time Shopping Cart:** Add or remove items from the cart with quantity selection.
+- **Guest Checkout:** No account required—perfect for quick restaurant orders.
+- **IDR Pricing:** All prices are displayed in Indonesian Rupiah (Rp).
 
-## Learning Laravel
+### 💳 Mock QR Payment Flow (Demo Mode)
+- **QR Code Generation:** Each order generates a unique QR code containing order details.
+- **Payment Simulation:** A dedicated "Simulate Payment" feature to demonstrate the successful transaction flow for presentations.
+- **Success Confirmation:** A professional success page showing the order status.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 🍱 Authentic Menu
+- **High-Quality Images:** Local AI-style images for dishes like Mandi Lamb, Chicken Biryani, Samosas, and more.
+- **Categories:** Appetizers, Main Courses, and Desserts.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 🛠 Technical Stack
+- **Framework:** Laravel 8 (PHP 8.0)
+- **Database:** MySQL (using `sultaf_db`)
+- **Frontend:** Blade Templates & Vanilla CSS for a vintage aesthetic.
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## 📦 Installation & Setup
 
-### Premium Partners
+To run this project on your local machine, follow these steps:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+### 1. Prerequisites
+- **XAMPP** (with PHP 8.0 and MySQL)
+- **Composer**
+- **Node.js & NPM**
 
-## Contributing
+### 2. Clone the Repository
+```bash
+git clone https://github.com/huzaifaakmal/Sultaf-Resto.git
+cd sultaf-web
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Setup Environment
+1. Create a database named `sultaf_db` in your MySQL (HeidiSQL/phpMyAdmin).
+2. Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+3. Update the `.env` file with your database credentials:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=sultaf_db
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
 
-## Code of Conduct
+### 4. Install Dependencies
+```bash
+composer install
+npm install
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 5. Initialize Database
+```bash
+php artisan key:generate
+php artisan migrate:fresh --seed
+```
 
-## Security Vulnerabilities
+### 6. Run the Application
+```bash
+php artisan serve
+```
+Visit the app at: [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## 🎓 School Project Demo Guide
+1. **Browse:** Select "Add to Cart" on items like Mandi Lamb or Biryani.
+2. **Review:** Click the "Cart" link in the navigation bar.
+3. **Checkout:** Fill in the customer name and phone.
+4. **Payment:** Show the generated QR code.
+5. **Simulate:** Click the green "Simulate Payment Success" button to complete the demo flow.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+**Developed by:** huzaifaakmal  
+**Project for:** School Demo / Portfolio
