@@ -17,12 +17,18 @@ class AdminAuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
+        $request->validate([
             'username' => 'required',
             'password' => 'required',
         ]);
 
-        if (Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password'], 'role' => 'admin'])) {
+        $user = \App\Models\User::where('username', $request->username)
+                                ->where('password', $request->password)
+                                ->where('role', 'admin')
+                                ->first();
+
+        if ($user) {
+            Auth::login($user);
             $request->session()->regenerate();
             return redirect()->intended(route('admin.dashboard'));
         }

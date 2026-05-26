@@ -35,11 +35,6 @@ We have moved from a "Flat" database to a "Relational" database.
 
 ## 3. Security & Authentication
 
-### Password Hashing (Bcrypt)
-We use **Bcrypt hashing** via Laravel's `Hash::make()`. 
-*   **Concept**: You never store a "plain text" password (like `admin`). Instead, you store a mathematical "hash." Even if someone steals the database, they cannot see your real password.
-*   **Verification**: When you log in, Laravel hashes the password you typed and compares the two "hashes."
-
 ### CSRF Protection (419 Error)
 You might have seen a "419 Page Expired" error.
 *   **CSRF (Cross-Site Request Forgery)**: A security attack where someone tries to submit a form on your behalf.
