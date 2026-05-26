@@ -67,9 +67,8 @@ class CheckoutController extends Controller
             return redirect()->route('order.success', $order_number);
         }
 
-        // Mock QR Code generation URL
-        $qrContent = "Order: " . $order->order_number . " | Total: Rp " . number_format($order->total_price, 0, ',', '.');
-        $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" . urlencode($qrContent);
+        // Use the real QRIS image provided
+        $qrUrl = asset('images/qris.jpg');
 
         return view('payment', compact('order', 'qrUrl'));
     }

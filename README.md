@@ -1,95 +1,60 @@
-# Sultaf Restaurant - Online Ordering Demo
+# Sultaf Restaurant 🕌
 
-A vintage-style Arabic dining website built for a school project. This application allows customers to browse authentic Middle Eastern cuisine, add items to a shopping cart, and simulate a QR-code based payment process.
+Sultaf Restaurant is a premium, vintage-themed Arabic dining platform. It features a rich, aesthetic user interface for customers and a secure management system for administrators.
 
-## 📍 Location
-**Address:** Jalan Malioboro No. 123, Kotagede, Yogyakarta, Indonesia  
-**Phone:** +62 812 3456 7890
+## 🌟 Key Features
 
----
+### For Customers
+*   **Authentic UI**: A vintage, parchment-themed interface inspired by traditional Arabic hospitality.
+*   **Dynamic Menu**: Browse categories (Main Course, Appetizers, Desserts, Drinks) with real-time price updates.
+*   **Shopping Cart**: Easily add, manage, and remove items before checkout.
+*   **QRIS Payment**: Integrated real-world QRIS payment system for seamless transactions.
+*   **Order Success Tracking**: Clear verification and success screens after payment simulation.
 
-## 🚀 Features
+### For Administrators
+*   **Secure Dashboard**: Protected by custom `IsAdmin` middleware.
+*   **Menu Management**:
+    *   **Create**: Add new menu items with image uploads.
+    *   **Read**: View all current offerings in a clean, organized table.
+    *   **Update**: Modify food prices instantly.
+    *   **Delete**: Remove items no longer available.
+*   **Dynamic Categories**: Fully relational category management.
 
-### 🛒 Online Ordering System
-- **Real-time Shopping Cart:** Add or remove items from the cart with quantity selection.
-- **Guest Checkout:** No account required—perfect for quick restaurant orders.
-- **IDR Pricing:** All prices are displayed in Indonesian Rupiah (Rp).
+## 🛠️ Technical Stack
 
-### 💳 Mock QR Payment Flow (Demo Mode)
-- **QR Code Generation:** Each order generates a unique QR code containing order details.
-- **Payment Simulation:** A dedicated "Simulate Payment" feature to demonstrate the successful transaction flow for presentations.
-- **Success Confirmation:** A professional success page showing the order status.
+*   **Framework**: Laravel 8 (PHP)
+*   **Database**: MySQL / MariaDB (Relational Architecture)
+*   **Frontend**: Blade Templating, Vanilla CSS (Modern aesthetic with vintage variables)
+*   **Security**: Bcrypt Password Hashing, CSRF Protection, Session Management (Database-driven)
 
-### 🍱 Authentic Menu
-- **High-Quality Images:** Local AI-style images for dishes like Mandi Lamb, Chicken Biryani, Samosas, and more.
-- **Categories:** Appetizers, Main Courses, and Desserts.
+## 🚀 Installation & Setup
 
-### 🛠 Technical Stack
-- **Framework:** Laravel 8 (PHP 8.0)
-- **Database:** MySQL (using `sultaf_db`)
-- **Frontend:** Blade Templates & Vanilla CSS for a vintage aesthetic.
+1.  **Clone the repository**
+2.  **Install dependencies**:
+    ```bash
+    composer install
+    npm install
+    ```
+3.  **Environment Setup**:
+    *   Copy `.env.example` to `.env`.
+    *   Configure your database credentials.
+    *   Generate application key: `php artisan key:generate`.
+4.  **Database Migration & Seeding**:
+    ```bash
+    php artisan migrate:refresh --seed
+    ```
+5.  **Run the application**:
+    ```bash
+    php artisan serve
+    ```
 
----
+## 🔐 Admin Credentials (Default)
+*   **Login URL**: `/admin/login`
+*   **Username**: `admin`
+*   **Password**: `admin`
 
-## 📦 Installation & Setup
-
-To run this project on your local machine, follow these steps:
-
-### 1. Prerequisites
-- **XAMPP** (with PHP 8.0 and MySQL)
-- **Composer**
-- **Node.js & NPM**
-
-### 2. Clone the Repository
-```bash
-git clone https://github.com/huzaifaakmal/Sultaf-Resto.git
-cd sultaf-web
-```
-
-### 3. Setup Environment
-1. Create a database named `sultaf_db` in your MySQL (HeidiSQL/phpMyAdmin).
-2. Copy the example environment file:
-   ```bash
-   cp .env.example .env
-   ```
-3. Update the `.env` file with your database credentials:
-   ```env
-   DB_CONNECTION=mysql
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=sultaf_db
-   DB_USERNAME=root
-   DB_PASSWORD=
-   ```
-
-### 4. Install Dependencies
-```bash
-composer install
-npm install
-```
-
-### 5. Initialize Database
-```bash
-php artisan key:generate
-php artisan migrate:fresh --seed
-```
-
-### 6. Run the Application
-```bash
-php artisan serve
-```
-Visit the app at: [http://127.0.0.1:8000](http://127.0.0.1:8000)
+## 📖 Detailed Documentation
+For a deep dive into the technical concepts (MVC, Relational Database, Security, etc.) used in this project, please refer to the [DOCUMENTATION.md](./DOCUMENTATION.md) file.
 
 ---
-
-## 🎓 School Project Demo Guide
-1. **Browse:** Select "Add to Cart" on items like Mandi Lamb or Biryani.
-2. **Review:** Click the "Cart" link in the navigation bar.
-3. **Checkout:** Fill in the customer name and phone.
-4. **Payment:** Show the generated QR code.
-5. **Simulate:** Click the green "Simulate Payment Success" button to complete the demo flow.
-
----
-
-**Developed by:** huzaifaakmal  
-**Project for:** School Demo / Portfolio
+*Created for the Sultaf Restaurant Group Project - Yogyakarta, 2026.*

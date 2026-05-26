@@ -8,11 +8,11 @@
         <h3 style="margin-bottom: 1rem;">Total Amount: <span style="color: var(--crimson);">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span></h3>
         <p style="margin-bottom: 2rem; color: #666;">Scan the QR code below to complete your payment.</p>
         
-        <div style="background: #fdfdfd; padding: 2rem; border-radius: 8px; display: inline-block; border: 1px solid #eee; margin-bottom: 2rem;">
-            <img src="{{ $qrUrl }}" alt="Payment QR Code" style="max-width: 100%; height: auto;">
+        <div style="background: #fdfdfd; padding: 1rem; border-radius: 8px; display: inline-block; border: 1px solid #eee; margin-bottom: 2rem;">
+            <img src="{{ $qrUrl }}" alt="QRIS Payment" style="max-width: 100%; height: auto; border-radius: 4px;">
         </div>
 
-        <p style="font-style: italic; color: var(--gold); margin-bottom: 2rem;">Demo Version: Scan this with any QR reader to see order details.</p>
+        <p style="font-style: italic; color: var(--gold); margin-bottom: 2rem;">Please scan the QRIS code above using your preferred payment app (Gopay, OVO, Dana, LinkAja, or Mobile Banking).</p>
 
         <form action="{{ route('payment.simulate', $order->order_number) }}" method="POST">
             @csrf

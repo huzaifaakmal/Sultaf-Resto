@@ -216,6 +216,9 @@
     <footer>
         <p>&copy; 2026 Sultaf Restaurant. Experience the Essence of Arabia.</p>
         <p style="margin-top: 1rem; font-family: 'Amiri', serif;">Authentic Flavors | Vintage Ambience | Traditional Hospitality</p>
+        <div style="margin-top: 2rem;">
+            <a href="{{ route('admin.dashboard') }}" style="color: rgba(212, 175, 55, 0.5); text-decoration: none; font-size: 0.8rem;">Admin Panel</a>
+        </div>
     </footer>
 </body>
 </html>

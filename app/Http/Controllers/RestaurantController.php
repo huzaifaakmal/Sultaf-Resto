@@ -9,7 +9,7 @@ class RestaurantController extends Controller
 {
     public function index()
     {
-        $menuItems = MenuItem::all();
+        $menuItems = MenuItem::with('category')->get();
         return view('home', compact('menuItems'));
     }
 }

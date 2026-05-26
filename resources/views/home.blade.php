@@ -14,13 +14,13 @@
         @foreach($menuItems as $item)
             <div class="menu-item" style="display: flex; flex-direction: column; justify-content: space-between; padding: 0;">
                 @if($item->image)
-                    <img src="{{ $item->image }}" alt="{{ $item->name }}" style="width: 100%; height: 200px; object-fit: cover; border-bottom: 2px solid var(--gold);">
+                    <img src="{{ asset($item->image) }}" alt="{{ $item->name }}" style="width: 100%; height: 200px; object-fit: cover; border-bottom: 2px solid var(--gold);">
                 @endif
                 <div style="padding: 1.5rem;">
                     <h3>{{ $item->name }}</h3>
                     <span class="price">Rp {{ number_format($item->price, 0, ',', '.') }}</span>
                     <p>{{ $item->description }}</p>
-                    <div style="margin-top: 1rem; font-style: italic; color: var(--gold); margin-bottom: 1rem;">Category: {{ $item->category }}</div>
+                    <div style="margin-top: 1rem; font-style: italic; color: var(--gold); margin-bottom: 1rem;">Category: {{ $item->category->name }}</div>
                 
                     <form action="{{ route('cart.add', $item->id) }}" method="POST" style="margin-top: auto;">
                         @csrf
