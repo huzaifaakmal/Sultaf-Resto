@@ -93,6 +93,8 @@ tests/Feature/                     feature tests
 php artisan test
 ```
 
+24 feature tests, no setup needed beyond `composer install`: they use an in-memory SQLite database, their own `APP_KEY`/JWT/webhook secrets (in `phpunit.xml`) and do not need `npm run build`. Coverage: public pages, access per role, admin menu forms, member points, model aliases and the whole JSON API.
+
 ## Documentation
 
 - [DOCUMENTATION.md](DOCUMENTATION.md): architecture, database, security and request flow

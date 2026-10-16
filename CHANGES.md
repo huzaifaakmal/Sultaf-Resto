@@ -1,6 +1,6 @@
 # Backend Change Report
 
-Commits: `Resolve merge conflicts and reorganize backend per role` and the follow-ups below.
+Scope: the whole backend cleanup, from the merge-conflict fix to the finished JSON API (sections 1-14 below). Final state: the web app and the API run, and `php artisan test` passes 24 of 24.
 
 Goal: clean up the backend architecture so the backend and frontend teams can work separately. **No UI changes** (markup, CSS and Blade contents are untouched, apart from removed merge-conflict markers).
 
@@ -123,6 +123,15 @@ The `Api/*` controllers depended on classes that never made it into the reposito
 - `.env.example` and `phpunit.xml` got the JWT/webhook settings.
 
 Verification: `tests/Feature/ApiTest.php` (12 tests: login ok/failed/invalid, `me`, refresh blacklists the old token, logout, scope enforcement incl. `admin:all`, missing/garbage tokens, waiter order create/validation/show, table status, payment intent, unsigned/wrongly signed/signed webhooks, replay, Stripe-style payload) plus a manual run of every endpoint with curl against `php artisan serve`. `php artisan test`: all tests pass.
+
+## 14. Tests run on a clean clone
+
+The suite initially passed only on the author's machine. A fresh `git clone` + `composer install` (no `.env`, no `npm run build`) exposed two gaps, now fixed:
+
+- `phpunit.xml` has its own `APP_KEY` (plus `JWT_SECRET` and `PAYMENT_WEBHOOK_SECRET`), so web tests no longer fail with "No application encryption key".
+- `tests/TestCase.php` calls `withoutVite()`, so tests do not need the compiled frontend assets.
+
+Final check on a fresh clone and in the working folder: 24 tests, 147 assertions, all passing.
 
 ## Still open
 
