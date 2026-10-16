@@ -26,13 +26,9 @@ class JwtRbacScopeMiddleware
                 ], 401);
             }
 
-            // 2. Extract Claims & Tenant ID
+            // 2. Extract the permission scopes carried by the token
             $payload = JWTAuth::getPayload();
-            $tenantId = $payload->get('tenant_id') ?? $user->tenant_id ?? 1;
             $userScopes = (array) ($payload->get('scopes') ?? []);
-
-            // Bind current tenant to application container for TenantScope
-            app()->instance('current_tenant_id', (int) $tenantId);
 
             // 3. Verify Required Permission Scopes
             if (! empty($requiredScopes)) {

@@ -16,7 +16,7 @@ Built with **Laravel 13**, Blade, Vite and Tailwind CSS 4. This is a group cours
 
 ## Requirements
 
-- PHP 8.4+ with the `mbstring`, `openssl`, `pdo_sqlite`, `fileinfo` and `curl` extensions
+- PHP 8.4+ with the `mbstring`, `openssl`, `pdo_sqlite`, `fileinfo`, `curl` and `sodium` extensions
 - Composer 2
 - Node.js 20.19+ (or 22.12+) and npm
 
@@ -28,6 +28,7 @@ npm install && npm run build
 
 cp .env.example .env
 php artisan key:generate
+php artisan jwt:secret              # signing key for the API tokens
 
 touch database/database.sqlite        # SQLite is the default database
 php artisan migrate --seed
@@ -51,13 +52,33 @@ All seeded accounts use the password `password123`.
 
 Customers sign up at `/register`. After login, each role is redirected to its own dashboard (`/admin/dashboard`, `/owner/dashboard`, `/kasir/dashboard`, `/dapur/dashboard`).
 
+## API
+
+JSON API under `/api`, authenticated with JWT bearer tokens (`php-open-source-saver/jwt-auth`). Log in with the same staff accounts; each role gets permission scopes (see `app/Services/JwtAuthService.php`).
+
+| Method | Endpoint | Auth |
+|---|---|---|
+| POST | `/api/auth/login` | public (`email`, `password`), throttled |
+| POST | `/api/auth/refresh` | bearer token (old token is blacklisted) |
+| POST | `/api/auth/logout`, GET `/api/auth/me` | bearer token |
+| GET | `/api/waiter/tables`, `/api/waiter/orders/{id or code}` | scope `orders:read` |
+| POST | `/api/waiter/orders` | scope `orders:write` |
+| POST | `/api/payments/intent` | scope `payments:write` |
+| POST | `/api/payments/webhook` | HMAC-SHA256 of the body in `X-Signature`, using `PAYMENT_WEBHOOK_SECRET` |
+
+`admin` has the `admin:all` scope and passes every check. Payments return a mock intent unless `STRIPE_SECRET` is set and the Stripe SDK is installed.
+
+```bash
+curl -X POST http://localhost:8000/api/auth/login -H "Accept: application/json"      -d "email=kasir@sultaf.com&password=password123"
+```
+
 ## Project structure
 
 ```
 app/Http/Controllers/
   Admin/  Owner/  Kasir/  Dapur/   one folder per staff role
   Customer/                        public site: home, menu, cart, checkout, orders, profile, rewards
-  Auth/  Shared/  Api/             login/register, language switch, API (not routed yet)
+  Auth/  Shared/  Api/             login/register, language switch, JSON API (routes/api.php)
 app/Http/Middleware/EnsureUserHasRole.php   `role:kasir,admin` route middleware
 app/Models/  app/Services/         Eloquent models, MemberPointService
 routes/web.php                     all routes: public/customer first, then one group per role
@@ -79,7 +100,7 @@ php artisan test
 
 ## Known gaps
 
-A few controllers under `Api/*` depend on classes that are not in the repository yet (JWT, payment gateway, RMS/OTA integrations), so the API is not routed. The full list is in [CHANGES.md](CHANGES.md#still-open).
+See [CHANGES.md](CHANGES.md#still-open): the admin menu form still posts a few fields the `menus` table does not have, and the owner/kasir/dapur layouts are simple placeholders.
 
 ---
 

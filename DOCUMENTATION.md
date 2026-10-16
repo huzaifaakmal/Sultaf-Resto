@@ -16,10 +16,10 @@ app/Http/
     Customer/   Home, Menu, Cart, Checkout, Order, Profile, Rewards, Notification
     Auth/       AuthController (login, register, logout)
     Shared/     LocaleController (ID/EN switch)
-    Api/        Auth, WaiterOrder, PaymentGateway, OtaWebhook (not routed yet)
-  Middleware/   EnsureUserHasRole (alias `role`), SetLocale, TenantScope, JwtRbacScope
+    Api/        AuthController, WaiterOrderController, PaymentGatewayController (routes/api.php)
+  Middleware/   EnsureUserHasRole (alias `role`), SetLocale, JwtRbacScopeMiddleware (alias `jwt.scope`)
 app/Models/     User, Menu, TransaksiPenjualan, DetailTransaksi, Member, Promo, Notifikasi, ...
-app/Services/   MemberPointService
+app/Services/   MemberPointService, JwtAuthService, PaymentGatewayService
 routes/web.php  every route, grouped by audience
 resources/views Blade views, grouped like the controllers
 ```
@@ -73,7 +73,16 @@ Some views still use older field names (`nama_makanan`, `harga_makanan`, `total_
 
 **Member points:** `MemberPointService::awardFromTransaksi()` gives 1 point per Rp 10,000 to the member whose phone number matches the order.
 
-## 5. Security
+## 5. JSON API
+
+Defined in `routes/api.php` (prefix `/api`, no session or CSRF).
+
+- **Auth:** `POST /api/auth/login` verifies email and password and returns a JWT whose claims carry the user's `role` and `scopes`. `refresh` returns a new token and blacklists the old one; `logout` blacklists the current one (the blacklist uses the cache store).
+- **Scopes:** `JwtAuthService` maps roles to scopes: `admin` -> `admin:all` (bypasses checks), `owner` -> `orders:read`, `reports:read`, `kasir` -> `orders:read`, `orders:write`, `payments:write`, `dapur` and `customer` -> `orders:read`. `JwtRbacScopeMiddleware` (`jwt.scope:orders:write`) validates the token and the required scope; failures return JSON errors (`token_absent`, `token_invalid`, `token_expired`, `forbidden_insufficient_scope`).
+- **Waiter orders:** `GET /api/waiter/tables` (20 tables, occupied when a dine-in order is pending, cooking, ready or being served), `POST /api/waiter/orders` (creates a `TransaksiPenjualan` + `DetailTransaksi` rows, 10% tax, code `WTR-XXXXXX`), `GET /api/waiter/orders/{id|code}`.
+- **Payments:** `POST /api/payments/intent` returns a Stripe intent when `STRIPE_SECRET` and the SDK are available, otherwise a mock intent. `POST /api/payments/webhook` is public but must carry `X-Signature` = HMAC-SHA256 of the raw body with `PAYMENT_WEBHOOK_SECRET`; without a configured secret every call is rejected. A success event (`payment.succeeded`, `payment_intent.succeeded`, `settlement`, `capture`) marks the order `terverifikasi` and awards member points once.
+
+## 6. Security
 
 - **Passwords** are hashed with `Hash::make()` on register and password change, and checked through `Auth::attempt()`, never compared in plain text. Seeded accounts use `Hash::make()` too.
 - **CSRF**: every form includes `@csrf`; a missing or expired token returns a 419 page.
@@ -81,17 +90,16 @@ Some views still use older field names (`nama_makanan`, `harga_makanan`, `total_
 - **Uploads** (menu photos, payment proof) are validated by type and size and stored on the `public` disk (`storage/app/public`, exposed through `php artisan storage:link`).
 - **Sessions** are stored in the database.
 
-## 6. Localization
+## 7. Localization
 
 `SetLocale` reads the `locale` value from the session (`id` or `en`); `/lang/{locale}` changes it. UI strings are wrapped in `__()`; the repository only ships the English framework files in `resources/lang/en`, so strings without a translation fall back to their source text.
 
-## 7. Tests
+## 8. Tests
 
-`php artisan test` runs the feature tests in `tests/Feature`: public pages, every role's pages, role middleware and guest redirects, member points and the `Menu` model aliases.
+`php artisan test` runs the feature tests in `tests/Feature`: public pages, every role's pages, role middleware and guest redirects, admin menu forms, member points, the `Menu` model aliases and the whole JSON API (login, refresh, logout, scopes, waiter orders, payments, signed webhooks).
 
-## 8. Known gaps
+## 9. Known gaps
 
-- `Api/*` controllers are not routed: they need JWT/payment/RMS/OTA classes that are not in the repository (`JwtAuthService`, `PaymentGatewayService`, `RmsIntegrationService`, `OtaChannelSyncService`, `AuditLog`, `TransaksiItem`).
 - Two menu schemas coexist (`menu_items` + `categories` legacy, `menus` current).
 - The admin menu form still posts a few old fields (`category_id`, `spice_level`); the controller maps what it can and ignores the rest.
 - The owner, kasir and dapur layouts are simple placeholders based on the admin layout.

@@ -45,8 +45,7 @@ class AuthController extends Controller
                 'access_token' => $token,
                 'expires_in'   => $ttlMinutes * 60,
                 'user'         => [
-                    'id'        => $user->id,
-                    'tenant_id' => $user->tenant_id ?? 1,
+                    'id'        => $user->id_user,
                     'name'      => $user->name,
                     'email'     => $user->email,
                     'role'      => $user->role,
@@ -121,19 +120,14 @@ class AuthController extends Controller
             ], 401);
         }
 
-        $user->load('tenant');
-
         return response()->json([
             'success' => true,
             'user'    => [
-                'id'        => $user->id,
-                'tenant_id' => $user->tenant_id ?? 1,
-                'tenant'    => $user->tenant?->name ?? 'Default Property',
+                'id'        => $user->id_user,
                 'name'      => $user->name,
                 'email'     => $user->email,
                 'role'      => $user->role,
-                'phone'     => $user->phone,
-                'avatar'    => $user->avatar,
+                'phone'     => $user->no_hp,
                 'points'    => $user->points,
                 'scopes'    => $this->jwtAuthService->resolveRoleScopes($user->role),
             ],
