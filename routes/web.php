@@ -1,108 +1,123 @@
 <?php
 
-<<<<<<< HEAD
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\MenuController as AdminMenuController;
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\Customer\CartController;
+use App\Http\Controllers\Customer\CheckoutController;
+use App\Http\Controllers\Customer\HomeController;
+use App\Http\Controllers\Customer\MenuController;
+use App\Http\Controllers\Customer\NotificationController;
+use App\Http\Controllers\Customer\OrderController;
+use App\Http\Controllers\Customer\ProfileController;
+use App\Http\Controllers\Customer\RewardsController;
+use App\Http\Controllers\Dapur\DapurDashboardController;
+use App\Http\Controllers\Dapur\KitchenDisplayController;
+use App\Http\Controllers\Dapur\MenuAvailabilityController;
+use App\Http\Controllers\Kasir\KasirDashboardController;
+use App\Http\Controllers\Kasir\PembayaranController;
+use App\Http\Controllers\Kasir\PesananController;
+use App\Http\Controllers\Kasir\PosController;
+use App\Http\Controllers\Owner\LaporanController;
+use App\Http\Controllers\Owner\OwnerDashboardController;
+use App\Http\Controllers\Shared\LocaleController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\MenuController;
+
 /*
 |--------------------------------------------------------------------------
-| Sultaf Restaurant Complete Routes
+| Rute Sultaf Restaurant
 |--------------------------------------------------------------------------
+| Urutan: publik & pelanggan, lalu per peran (admin, owner, kasir, dapur).
 */
 
-// Language Switcher Route
 Route::get('lang/{locale}', [LocaleController::class, 'switch'])->name('lang.switch');
 
-// Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/menu', function () {
-    return view('menu.index');
-})->name('menu.index');
+Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
 
-// Guest Authentication Routes
-Route::middleware(['guest'])->group(function () {
+// Keranjang
+Route::prefix('cart')->name('cart.')->group(function () {
+    Route::get('/', [CartController::class, 'index'])->name('index');
+    Route::post('/add/{menu}', [CartController::class, 'add'])->name('add');
+    Route::post('/decrease/{menu}', [CartController::class, 'decrease'])->name('decrease');
+    Route::delete('/remove/{menu}', [CartController::class, 'remove'])->name('remove');
+});
+
+// Autentikasi
+Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.store');
-    
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.store');
 });
 
-Route::post('/logout', [AuthController::class, 'logout'])
-    ->middleware('auth')
-    ->name('logout');
-// Admin Authenticated Routes
-Route::middleware(['auth'])->group(function () {
-    // Admin Dashboard
-    Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
-    // Admin Menu Management Routes
-    Route::get('/admin/menu/create', [MenuController::class, 'create'])->name('admin.menu.create');
-    Route::post('/admin/menu', [MenuController::class, 'store'])->name('admin.menu.store');
-    Route::get('/admin/menu', [MenuController::class, 'index'])->name('admin.menu.index');
-
-    // ... other dashboard routes ...
-});
-    // Cart Routes
-Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-
-// Role-Based Authenticated Routes
-Route::middleware(['auth'])->group(function () {
-    // Admin Dashboard
-    Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
-
-    // Owner Dashboard
-    Route::get('/owner/dashboard', function () {
-        return view('owner.dashboard');
-    })->name('owner.dashboard');
-
-    // Kasir Dashboard / POS
-    Route::get('/kasir/dashboard', function () {
-        return view('kasir.dashboard');
-    })->name('kasir.dashboard');
-
-    // Dapur (Kitchen) Dashboard
-    Route::get('/dapur/dashboard', function () {
-        return view('dapur.dashboard');
-    })->name('dapur.dashboard');
-});
-=======
-use App\Http\Controllers\RestaurantController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\CheckoutController;
-use Illuminate\Support\Facades\Route;
-
-Route::get('/', [RestaurantController::class, 'index'])->name('home');
-
-Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
-Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
-Route::get('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
-
-Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
-Route::get('/payment/{order_number}', [CheckoutController::class, 'payment'])->name('payment.index');
-Route::post('/payment/{order_number}/simulate', [CheckoutController::class, 'simulate'])->name('payment.simulate');
-Route::get('/order/success/{order_number}', [CheckoutController::class, 'success'])->name('order.success');
-
-// Admin Panel Routes
-use App\Http\Controllers\AdminAuthController;
-use App\Http\Controllers\AdminMenuController;
-
-Route::prefix('admin')->group(function () {
-    Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
-    Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
-    Route::get('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
-
-    Route::middleware(['admin'])->group(function () {
-        Route::get('/', [AdminMenuController::class, 'index'])->name('admin.dashboard');
-        Route::post('/menu', [AdminMenuController::class, 'store'])->name('admin.menu.store');
-        Route::put('/menu/{id}', [AdminMenuController::class, 'update'])->name('admin.menu.update');
-        Route::delete('/menu/{id}', [AdminMenuController::class, 'destroy'])->name('admin.menu.destroy');
+// Checkout & akun pelanggan
+Route::middleware('auth')->group(function () {
+    Route::prefix('checkout')->name('checkout.')->group(function () {
+        Route::get('/', fn () => redirect()->route('checkout.details'))->name('index');
+        Route::get('/details', [CheckoutController::class, 'details'])->name('details');
+        Route::post('/details', [CheckoutController::class, 'storeDetails'])->name('details.store');
+        Route::get('/payment', [CheckoutController::class, 'payment'])->name('payment');
+        Route::post('/payment', [CheckoutController::class, 'storePayment'])->name('payment.store');
+        Route::get('/finish/{transaksi}', [CheckoutController::class, 'finish'])->name('finish');
     });
+
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{transaksi}', [OrderController::class, 'show'])->name('orders.show');
+
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+
+    Route::get('/rewards', [RewardsController::class, 'index'])->name('rewards.index');
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
 });
->>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
+
+// ---- Admin ----
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/menu', [AdminMenuController::class, 'index'])->name('menu.index');
+    Route::post('/menu', [AdminMenuController::class, 'store'])->name('menu.store');
+    Route::put('/menu/{id}', [AdminMenuController::class, 'update'])->name('menu.update');
+    Route::delete('/menu/{id}', [AdminMenuController::class, 'destroy'])->name('menu.destroy');
+});
+
+// ---- Owner ----
+Route::middleware(['auth', 'role:owner,admin'])->prefix('owner')->name('owner.')->group(function () {
+    Route::get('/dashboard', [OwnerDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
+});
+
+// ---- Kasir ----
+Route::middleware(['auth', 'role:kasir,admin'])->prefix('kasir')->name('kasir.')->group(function () {
+    Route::get('/dashboard', [KasirDashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/pos', [PosController::class, 'index'])->name('pos');
+    Route::post('/pos/add/{menu}', [PosController::class, 'addItem'])->name('pos.add');
+    Route::post('/pos/decrease/{menu}', [PosController::class, 'decreaseItem'])->name('pos.decrease');
+    Route::delete('/pos/remove/{menu}', [PosController::class, 'removeItem'])->name('pos.remove');
+    Route::post('/pos/clear', [PosController::class, 'clearCart'])->name('pos.clear');
+    Route::post('/pos/checkout', [PosController::class, 'checkout'])->name('pos.checkout');
+    Route::get('/pos/receipt/{transaksi}', [PosController::class, 'receipt'])->name('pos.receipt');
+
+    Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran');
+    Route::post('/pembayaran/{transaksi}/verify', [PembayaranController::class, 'verify'])->name('pembayaran.verify');
+    Route::post('/pembayaran/{transaksi}/reject', [PembayaranController::class, 'reject'])->name('pembayaran.reject');
+
+    Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
+    Route::patch('/pesanan/{transaksi}', [PesananController::class, 'updateStatus'])->name('pesanan.update');
+});
+
+// ---- Dapur ----
+Route::middleware(['auth', 'role:dapur,admin'])->prefix('dapur')->name('dapur.')->group(function () {
+    Route::get('/dashboard', [DapurDashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/pesanan', [KitchenDisplayController::class, 'index'])->name('pesanan');
+    Route::patch('/pesanan/{transaksi}', [KitchenDisplayController::class, 'updateStatus'])->name('pesanan.update');
+
+    Route::get('/menu', [MenuAvailabilityController::class, 'index'])->name('menu.index');
+    Route::patch('/menu/{menu}/toggle', [MenuAvailabilityController::class, 'toggle'])->name('menu.toggle');
+});

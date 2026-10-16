@@ -4,14 +4,38 @@ This document provides a detailed overview of the technical implementation for t
 
 ---
 
-## 1. Core Architecture: MVC (Model-View-Controller)
-The project follows the MVC design pattern to separate logic from the presentation layer.
+## 1. Core Architecture: MVC (Laravel 13)
+Proyek memakai pola MVC dengan controller, route, dan middleware yang dikelompokkan **per peran**.
 
-*   **Models (`app/Models`)**: These classes interact with the database tables.
-    *   *Example*: `MenuItem.php` maps to our menu items data.
-*   **Views (`resources/views`)**: These are the Blade templates that define the user interface.
-    *   *Example*: `home.blade.php` is the main page customers see.
-*   **Controllers (`app/Http/Controllers`)**: These handle the request logic and pass data from models to views.
+```
+app/Http/
+  Controllers/
+    Admin/      DashboardController, MenuController
+    Owner/      OwnerDashboardController, LaporanController
+    Kasir/      KasirDashboard, Pos, Pembayaran, Pesanan
+    Dapur/      DapurDashboard, KitchenDisplay, MenuAvailability
+    Customer/   Home, Menu, Cart, Checkout, Order, Profile, Rewards, Notification
+    Auth/       AuthController (login, register, logout)
+    Api/        Auth, WaiterOrder, PaymentGateway, OtaWebhook (belum di-route)
+    Shared/     LocaleController
+  Middleware/   EnsureUserHasRole (alias `role`), SetLocale, TenantScope, JwtRbacScope
+routes/
+  web.php       publik, auth, dan area pelanggan
+  admin.php     /admin/*   -> role:admin
+  owner.php     /owner/*   -> role:owner,admin
+  kasir.php     /kasir/*   -> role:kasir,admin
+  dapur.php     /dapur/*   -> role:dapur,admin
+```
+
+*   **Models (`app/Models`)**: berinteraksi dengan tabel database.
+*   **Views (`resources/views`)**: template Blade, dikelompokkan sama seperti controller (`admin/`, `kasir/`, `dapur/`, `owner/`, ...).
+*   **Bootstrap (`bootstrap/app.php`)**: gaya Laravel 11+; alias middleware `role`, middleware `SetLocale`, dan pemuatan file route per peran ada di sini. Tidak ada lagi `Http/Kernel`, `Console/Kernel`, `Exceptions/Handler`, atau `RouteServiceProvider`.
+
+### Catatan / pekerjaan tersisa
+*   Banyak controller memakai kelas yang belum ada: model `TransaksiPenjualan`, `DetailTransaksi`, `Benefit`, `PromoMessage`, `AuditLog` dan service `RmsIntegrationService`, `JwtAuthService`, `MemberPointService`, `PaymentGatewayService`, `OtaChannelSyncService`. Halaman yang bergantung padanya belum berfungsi.
+*   Dua skema menu hidup berdampingan: `menu_items` + `categories` (lama) dan `menus` (baru).
+*   Layout `x-layouts.owner`, `x-layouts.kasir`, `x-layouts.dapur` dipakai view tetapi belum dibuat.
+*   Route API (`Api/*`) belum didaftarkan karena paket JWT/Sanctum belum ada di `composer.json`.
 
 ---
 
@@ -42,7 +66,7 @@ You might have seen a "419 Page Expired" error.
 
 ### Middleware (`app/Http/Middleware`)
 Middleware is a "Filter" that sits between the user and the controller.
-*   **`IsAdmin` Middleware**: We created this to check if a user is logged in AND has the "admin" role. If they don't, it blocks them from seeing the dashboard.
+*   **`EnsureUserHasRole` Middleware (alias `role`)**: checks that the user is logged in AND has one of the allowed roles, e.g. `role:kasir,admin`. If they don't, it blocks them from seeing the dashboard.
 
 ---
 
@@ -64,8 +88,8 @@ Middleware is a "Filter" that sits between the user and the controller.
 
 ## 5. Summary of Development Workflow
 1.  **Request**: User goes to `/admin`.
-2.  **Middleware**: `IsAdmin` checks if they are logged in.
-3.  **Route**: `web.php` directs them to `AdminMenuController@index`.
+2.  **Middleware**: `role:admin` checks if they are logged in.
+3.  **Route**: `routes/admin.php` directs them to `Admin\MenuController@index`.
 4.  **Controller**: Asks `MenuItem` and `Category` models for data.
 5.  **View**: `dashboard.blade.php` receives the data and renders the HTML.
 
