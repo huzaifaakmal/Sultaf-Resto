@@ -3,6 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\DetailTransaksi;
+use App\Models\Member;
+use App\Models\Menu;
+use App\Models\Notifikasi;
+use App\Models\Promo;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -12,16 +17,22 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
-        // Safe empty arrays/stats to test if the view loads properly
         $stats = [
-            'total_menu' => 0,
-            'menu_habis' => 0,
-            'total_member' => 0,
-            'promosi_aktif' => 0,
+            'total_menu' => Menu::count(),
+            'menu_habis' => Menu::where('status_ketersediaan', 'habis')->count(),
+            'total_member' => Member::count(),
+            'promosi_aktif' => Promo::count(),
         ];
 
-        $menuTerlaris = collect();
-        $pesanTerakhir = collect();
+        $menuTerlaris = DetailTransaksi::selectRaw('id_menu, SUM(jumlah) as total_terjual')
+            ->groupBy('id_menu')
+            ->orderByDesc('total_terjual')
+            ->with('menu')
+            ->limit(5)
+            ->get()
+            ->map(fn ($d) => ['menu' => $d->menu, 'qty' => (int) $d->total_terjual]);
+
+        $pesanTerakhir = Notifikasi::latest()->limit(5)->get();
 
         return view('admin.dashboard', compact('user', 'stats', 'menuTerlaris', 'pesanTerakhir'));
     }

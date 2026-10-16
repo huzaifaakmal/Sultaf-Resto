@@ -6,9 +6,11 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
-<<<<<<< HEAD
-    //
-=======
-    use CreatesApplication;
->>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Tests do not need the compiled frontend assets (`npm run build`).
+        $this->withoutVite();
+    }
 }

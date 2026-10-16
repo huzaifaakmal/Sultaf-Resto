@@ -2,75 +2,42 @@
 
 namespace Database\Seeders;
 
+use App\Models\Menu;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 
 class MenuSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
+    public function run(): void
     {
-        $mainCourse = \App\Models\Category::where('name', 'Main Course')->first()->id;
-        $appetizers = \App\Models\Category::where('name', 'Appetizers')->first()->id;
-        $desserts = \App\Models\Category::where('name', 'Desserts')->first()->id;
+        $menus = [
+            ['Chicken Karahi', 'Wok-cooked chicken with fresh ginger, tomato and whole spices.', 65000, 'menu/chicken_karahi.jpg', 4.9],
+            ['White Karahi', 'Creamy white karahi with green chili and black pepper.', 70000, 'menu/white_karahi.jpg', 4.7],
+            ['Butter Chicken', 'Tandoori chicken in a rich buttery tomato gravy.', 68000, 'menu/butter_chicken.jpg', 4.8],
+            ['Tandoori Chicken', 'Marinated chicken roasted in the tandoor.', 60000, 'menu/tandoori_chicken.jpg', 4.6],
+            ['Zurbiyan Rice', 'Yemeni spiced rice slow-cooked with tender meat.', 85000, 'menu/zurbiyan_rice.jpg', 4.9],
+            ['Fasolya Hamra', 'Yemeni red bean stew served with fresh paratha.', 45000, 'menu/fasolya_hamra.jpg', 4.5],
+            ['Kunafa', 'Crisp kunafa with melted cheese and sweet syrup.', 40000, 'menu/kunafa.jpg', 4.8],
+            ['Mango Lassi', 'Chilled yogurt drink blended with ripe mango.', 25000, 'menu/mango_lassi.jpg', 4.7],
+        ];
 
-        \App\Models\MenuItem::create([
-            'name' => 'Mandi Lamb',
-            'description' => 'Slow-cooked lamb with fragrant basmati rice, infused with traditional Arabic spices and smoke.',
-            'price' => 85000,
-            'category_id' => $mainCourse,
-            'image' => 'images/mandi.jpg'
-        ]);
+        // Views load images from the public disk (asset('storage/...')), so copy the sample photos there.
+        foreach ($menus as [, , , $foto]) {
+            $source = public_path('assets/'.basename($foto));
+            if (is_file($source)) {
+                Storage::disk('public')->put($foto, file_get_contents($source));
+            }
+        }
 
-        \App\Models\MenuItem::create([
-            'name' => 'Chicken Kabsa',
-            'description' => 'The national dish of Saudi Arabia, featuring spiced rice and tender chicken.',
-            'price' => 65000,
-            'category_id' => $mainCourse,
-            'image' => 'images/kabsa.jpg'
-        ]);
-
-        \App\Models\MenuItem::create([
-            'name' => 'Hummus with Pita',
-            'description' => 'Creamy chickpea dip with tahini, olive oil, and fresh warm pita bread.',
-            'price' => 35000,
-            'category_id' => $appetizers,
-            'image' => 'images/hummus.jpg'
-        ]);
-
-        \App\Models\MenuItem::create([
-            'name' => 'Baklava',
-            'description' => 'Layers of filo pastry filled with chopped nuts and sweetened with honey syrup.',
-            'price' => 25000,
-            'category_id' => $desserts,
-            'image' => 'images/baklava.jpg'
-        ]);
-
-        \App\Models\MenuItem::create([
-            'name' => 'Samosa',
-            'description' => 'Crispy fried pastry filled with spiced potatoes and peas.',
-            'price' => 15000,
-            'category_id' => $appetizers,
-            'image' => 'images/samosa.jpg'
-        ]);
-
-        \App\Models\MenuItem::create([
-            'name' => 'Chicken Biryani',
-            'description' => 'Aromatic basmati rice layered with spiced chicken, herbs, and caramelized onions.',
-            'price' => 55000,
-            'category_id' => $mainCourse,
-            'image' => 'images/biryani.jpg'
-        ]);
-
-        \App\Models\MenuItem::create([
-            'name' => 'Chicken Karahi',
-            'description' => 'Tender chicken cooked in a traditional wok with ginger, garlic, and fresh tomatoes.',
-            'price' => 70000,
-            'category_id' => $mainCourse,
-            'image' => 'images/karahi.jpg'
-        ]);
+        foreach ($menus as [$nama, $deskripsi, $harga, $foto, $rating]) {
+            Menu::updateOrCreate(['nama_menu' => $nama], [
+                'deskripsi' => $deskripsi,
+                'harga' => $harga,
+                'foto_menu' => $foto,
+                'rating' => $rating,
+                'status_ketersediaan' => 'tersedia',
+                'is_halal' => true,
+            ]);
+        }
     }
 }

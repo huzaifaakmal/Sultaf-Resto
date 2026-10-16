@@ -1,77 +1,27 @@
 <?php
 
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\LocaleController;
-use App\Http\Controllers\MenuController;
-use Illuminate\Support\Facades\Route;
+namespace App\Http\Middleware;
 
-/*
-|--------------------------------------------------------------------------
-| Sultaf Restaurant Complete Routes
-|--------------------------------------------------------------------------
-*/
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-// Language Switcher Route
-Route::get('lang/{locale}', [LocaleController::class, 'switch'])->name('lang.switch');
+class EnsureUserHasRole
+{
+    /**
+     * Izinkan akses hanya untuk user dengan salah satu role yang diberikan.
+     * Contoh pemakaian di route: ->middleware('role:kasir,admin')
+     */
+    public function handle(Request $request, Closure $next, string ...$roles): Response
+    {
+        $user = $request->user();
 
-// Public Routes
-Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/menu', function () {
-    return view('menu.index');
-})->name('menu.index');
+        if (! $user) {
+            return redirect()->route('login');
+        }
 
-// Cart Route
-Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+        abort_unless(in_array($user->role, $roles, true), 403, 'Anda tidak memiliki akses ke halaman ini.');
 
-// Guest Authentication Routes
-Route::middleware(['guest'])->group(function () {
-    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->name('login.store');
-    
-    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-    Route::post('/register', [AuthController::class, 'register'])->name('register.store');
-});
-
-Route::post('/logout', [AuthController::class, 'logout'])
-    ->middleware('auth')
-    ->name('logout');
-
-/*
-|--------------------------------------------------------------------------
-| Role-Based Authenticated Routes
-|--------------------------------------------------------------------------
-*/
-
-// Admin Dashboard & Management Routes
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
-    
-    // Menu Management
-    Route::get('/admin/menu', [MenuController::class, 'index'])->name('admin.menu.index');
-    Route::get('/admin/menu/create', [MenuController::class, 'create'])->name('admin.menu.create');
-    Route::post('/admin/menu', [MenuController::class, 'store'])->name('admin.menu.store');
-});
-
-// Owner Dashboard Routes
-Route::middleware(['auth', 'role:owner'])->group(function () {
-    Route::get('/owner/dashboard', function () {
-        return view('owner.dashboard');
-    })->name('owner.dashboard');
-});
-
-// Kasir (POS) Dashboard Routes
-Route::middleware(['auth', 'role:kasir,admin'])->group(function () {
-    Route::get('/kasir/dashboard', function () {
-        return view('kasir.dashboard');
-    })->name('kasir.dashboard');
-});
-
-// Dapur (Kitchen) Dashboard Routes
-Route::middleware(['auth', 'role:dapur,admin'])->group(function () {
-    Route::get('/dapur/dashboard', function () {
-        return view('dapur.dashboard');
-    })->name('dapur.dashboard');
-});
+        return $next($request);
+    }
+}

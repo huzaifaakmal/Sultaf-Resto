@@ -1,6 +1,5 @@
 <?php
 
-<<<<<<< HEAD
 use App\Models\User;
 
 return [
@@ -37,16 +36,6 @@ return [
     | Supported: "session"
     |
     */
-=======
-return [
-    // Authentication Defaults
-
-    'defaults' => [
-        'guard' => 'web',
-        'passwords' => 'users',
-    ],
-    // Authentication Guards
->>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
 
     'guards' => [
         'web' => [
@@ -54,7 +43,6 @@ return [
             'provider' => 'users',
         ],
     ],
-<<<<<<< HEAD
 
     /*
     |--------------------------------------------------------------------------
@@ -72,18 +60,11 @@ return [
     | Supported: "database", "eloquent"
     |
     */
-=======
-    // User Providers
->>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
 
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-<<<<<<< HEAD
             'model' => env('AUTH_MODEL', User::class),
-=======
-            'model' => App\Models\User::class,
->>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
         ],
 
         // 'users' => [
@@ -91,7 +72,6 @@ return [
         //     'table' => 'users',
         // ],
     ],
-<<<<<<< HEAD
 
     /*
     |--------------------------------------------------------------------------
@@ -111,23 +91,15 @@ return [
     | quickly generating a very large amount of password reset tokens.
     |
     */
-=======
-    // Resetting Passwords
->>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
 
     'passwords' => [
         'users' => [
             'provider' => 'users',
-<<<<<<< HEAD
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
-=======
-            'table' => 'password_resets',
->>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
             'expire' => 60,
             'throttle' => 60,
         ],
     ],
-<<<<<<< HEAD
 
     /*
     |--------------------------------------------------------------------------
@@ -141,10 +113,5 @@ return [
     */
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
-=======
-    // Password Confirmation Timeout
-
-    'password_timeout' => 10800,
->>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
 
 ];

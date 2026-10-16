@@ -3,7 +3,6 @@
 use Illuminate\Support\Str;
 
 return [
-<<<<<<< HEAD
 
     /*
     |--------------------------------------------------------------------------
@@ -230,54 +229,5 @@ return [
     */
 
     'serialization' => 'json',
-=======
-    // Default Session Driver
-
-    'driver' => env('SESSION_DRIVER', 'file'),
-    // Session Lifetime
-
-    'lifetime' => env('SESSION_LIFETIME', 120),
-
-    'expire_on_close' => false,
-    // Session Encryption
-
-    'encrypt' => false,
-    // Session File Location
-
-    'files' => storage_path('framework/sessions'),
-    // Session Database Connection
-
-    'connection' => env('SESSION_CONNECTION', null),
-    // Session Database Table
-
-    'table' => 'sessions',
-    // Session Cache Store
-
-    'store' => env('SESSION_STORE', null),
-    // Session Sweeping Lottery
-
-    'lottery' => [2, 100],
-    // Session Cookie Name
-
-    'cookie' => env(
-        'SESSION_COOKIE',
-        Str::slug(env('APP_NAME', 'laravel'), '_').'_session'
-    ),
-    // Session Cookie Path
-
-    'path' => '/',
-    // Session Cookie Domain
-
-    'domain' => env('SESSION_DOMAIN', null),
-    // HTTPS Only Cookies
-
-    'secure' => env('SESSION_SECURE_COOKIE'),
-    // HTTP Access Only
-
-    'http_only' => true,
-    // Same-Site Cookies
-
-    'same_site' => 'lax',
->>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
 
 ];

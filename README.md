@@ -1,121 +1,109 @@
-<<<<<<< HEAD
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sultaf Restaurant
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A web ordering and restaurant-management app for **Sultaf Restaurant** (Pakistani & Yemeni cuisine, Yogyakarta). Customers browse the menu and order online; staff manage payments, the kitchen and reporting from role-based dashboards.
 
-## About Laravel
+Built with **Laravel 13**, Blade, Vite and Tailwind CSS 4. This is a group course project.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Role | What they can do |
+|---|---|
+| **Customer** | Browse the menu, cart, checkout (dine-in / takeaway, several payment methods, payment proof upload), order history, rewards and points, promo notifications, profile, ID/EN language switch |
+| **Admin** | Dashboard stats, menu CRUD (with photo upload), benefits/promotions, promo messages to customers |
+| **Owner** | Sales dashboard and sales/financial report |
+| **Kasir** (cashier) | Point of sale with receipt, payment verification, order status board, member points by phone number |
+| **Dapur** (kitchen) | Kitchen display (order status), menu availability toggle |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Requirements
 
-## Learning Laravel
+- PHP 8.4+ with the `mbstring`, `openssl`, `pdo_sqlite`, `fileinfo`, `curl` and `sodium` extensions
+- Composer 2
+- Node.js 20.19+ (or 22.12+) and npm
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Quick start
 
 ```bash
-composer require laravel/boost --dev
+composer install
+npm install && npm run build
 
-php artisan boost:install
+cp .env.example .env
+php artisan key:generate
+php artisan jwt:secret              # signing key for the API tokens
+
+touch database/database.sqlite        # SQLite is the default database
+php artisan migrate --seed
+php artisan storage:link              # serves uploaded and seeded menu photos
+
+php artisan serve                     # http://localhost:8000
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+`.env.example` already uses the `file` cache and `sync` queue (the project has no cache/jobs tables). For frontend development run `npm run dev` instead of `npm run build`.
 
-## Contributing
+### Seeded accounts
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+All seeded accounts use the password `password123`.
 
-## Code of Conduct
+| Role | Email |
+|---|---|
+| Admin | `admin@sultaf.com` |
+| Owner | `owner@sultaf.com` |
+| Kasir | `kasir@sultaf.com` |
+| Dapur | `dapur@sultaf.com` |
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Customers sign up at `/register`. After login, each role is redirected to its own dashboard (`/admin/dashboard`, `/owner/dashboard`, `/kasir/dashboard`, `/dapur/dashboard`).
 
-## Security Vulnerabilities
+## API
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+JSON API under `/api`, authenticated with JWT bearer tokens (`php-open-source-saver/jwt-auth`). Log in with the same staff accounts; each role gets permission scopes (see `app/Services/JwtAuthService.php`).
 
-## License
+| Method | Endpoint | Auth |
+|---|---|---|
+| POST | `/api/auth/login` | public (`email`, `password`), throttled |
+| POST | `/api/auth/refresh` | bearer token (old token is blacklisted) |
+| POST | `/api/auth/logout`, GET `/api/auth/me` | bearer token |
+| GET | `/api/waiter/tables`, `/api/waiter/orders/{id or code}` | scope `orders:read` |
+| POST | `/api/waiter/orders` | scope `orders:write` |
+| POST | `/api/payments/intent` | scope `payments:write` |
+| POST | `/api/payments/webhook` | HMAC-SHA256 of the body in `X-Signature`, using `PAYMENT_WEBHOOK_SECRET` |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-=======
-# Sultaf Restaurant 🕌
+`admin` has the `admin:all` scope and passes every check. Payments return a mock intent unless `STRIPE_SECRET` is set and the Stripe SDK is installed.
 
-Sultaf Restaurant is a premium, vintage-themed Arabic dining platform. It features a rich, aesthetic user interface for customers and a secure management system for administrators.
+```bash
+curl -X POST http://localhost:8000/api/auth/login -H "Accept: application/json"      -d "email=kasir@sultaf.com&password=password123"
+```
 
-## 🌟 Key Features
+## Project structure
 
-### For Customers
-*   **Authentic UI**: A vintage, parchment-themed interface inspired by traditional Arabic hospitality.
-*   **Dynamic Menu**: Browse categories (Main Course, Appetizers, Desserts, Drinks) with real-time price updates.
-*   **Shopping Cart**: Easily add, manage, and remove items before checkout.
-*   **QRIS Payment**: Integrated real-world QRIS payment system for seamless transactions.
-*   **Order Success Tracking**: Clear verification and success screens after payment simulation.
+```
+app/Http/Controllers/
+  Admin/  Owner/  Kasir/  Dapur/   one folder per staff role
+  Customer/                        public site: home, menu, cart, checkout, orders, profile, rewards
+  Auth/  Shared/  Api/             login/register, language switch, JSON API (routes/api.php)
+app/Http/Middleware/EnsureUserHasRole.php   `role:kasir,admin` route middleware
+app/Models/  app/Services/         Eloquent models, MemberPointService
+routes/web.php                     all routes: public/customer first, then one group per role
+resources/views/                   Blade views, grouped like the controllers
+database/migrations|seeders/       schema and sample data (menus, categories, staff accounts)
+tests/Feature/                     feature tests
+```
 
-### For Administrators
-*   **Secure Dashboard**: Protected by custom `IsAdmin` middleware.
-*   **Menu Management**:
-    *   **Create**: Add new menu items with image uploads.
-    *   **Read**: View all current offerings in a clean, organized table.
-    *   **Update**: Modify food prices instantly.
-    *   **Delete**: Remove items no longer available.
-*   **Dynamic Categories**: Fully relational category management.
+## Tests
 
-## 🛠️ Technical Stack
+```bash
+php artisan test
+```
 
-*   **Framework**: Laravel 8 (PHP)
-*   **Database**: MySQL / MariaDB (Relational Architecture)
-*   **Frontend**: Blade Templating, Vanilla CSS (Modern aesthetic with vintage variables)
-*   **Security**: Bcrypt Password Hashing, CSRF Protection, Session Management (Database-driven)
+24 feature tests, no setup needed beyond `composer install`: they use an in-memory SQLite database, their own `APP_KEY`/JWT/webhook secrets (in `phpunit.xml`) and do not need `npm run build`. Coverage: public pages, access per role, admin menu forms, member points, model aliases and the whole JSON API.
 
-## 🚀 Installation & Setup
+## Documentation
 
-1.  **Clone the repository**
-2.  **Install dependencies**:
-    ```bash
-    composer install
-    npm install
-    ```
-3.  **Environment Setup**:
-    *   Copy `.env.example` to `.env`.
-    *   Configure your database credentials.
-    *   Generate application key: `php artisan key:generate`.
-4.  **Database Migration & Seeding**:
-    ```bash
-    php artisan migrate:refresh --seed
-    ```
-5.  **Run the application**:
-    ```bash
-    php artisan serve
-    ```
+- [DOCUMENTATION.md](DOCUMENTATION.md): architecture, database, security and request flow
+- [CHANGES.md](CHANGES.md): report of the backend cleanup, what was fixed and what is still open
 
-## 🔐 Admin Credentials (Default)
-*   **Login URL**: `/admin/login`
-*   **Username**: `admin`
-*   **Password**: `admin`
+## Known gaps
 
-## 📖 Detailed Documentation
-For a deep dive into the technical concepts (MVC, Relational Database, Security, etc.) used in this project, please refer to the [DOCUMENTATION.md](./DOCUMENTATION.md) file.
+See [CHANGES.md](CHANGES.md#still-open): the admin menu form still posts a few fields the `menus` table does not have, and the owner/kasir/dapur layouts are simple placeholders.
 
 ---
-*Created for the Sultaf Restaurant Group Project - Yogyakarta, 2026.*
->>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
+
+*Sultaf Restaurant group project, Yogyakarta, 2026. Architecture cleanup assisted by [Muhammad Abiyyu Rahman](https://www.linkedin.com/in/muhammadabiyyurahman/) and [204l.com](https://204l.com).*
