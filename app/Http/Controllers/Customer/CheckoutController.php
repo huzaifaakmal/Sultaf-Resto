@@ -188,7 +188,7 @@ class CheckoutController extends Controller
     protected function calculateTotals(): array
     {
         $cart  = session('cart', []);
-        $menus = Menu::whereIn('id', array_keys($cart))->get()->keyBy('id');
+        $menus = Menu::whereIn('id_menu', array_keys($cart))->get()->keyBy('id_menu');
 
         $items = collect($cart)->map(function ($qty, $menuId) use ($menus) {
             $menu = $menus->get($menuId);

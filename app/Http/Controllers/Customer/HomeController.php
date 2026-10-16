@@ -14,7 +14,7 @@ class HomeController extends Controller
     {
         $categories = collect(); // Empty collection since categories table was removed
 
-        $featuredMenus = Menu::where('habis', false)
+        $featuredMenus = Menu::where('status_ketersediaan', '!=', 'habis')
             ->orderByDesc('rating')
             ->take(12)
             ->get();
