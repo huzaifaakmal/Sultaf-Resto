@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500&family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+    /* ===== Sultaf Brand Colors ===== */
+    --color-sultaf-maroon: #7A1620;
+    --color-sultaf-maroon-dark: #4A0E14;
+    --color-sultaf-maroon-light: #9C2A33;
+
+    /* ===== Warm Gold / Brass Accents ===== */
+    --color-sultaf-gold: #BF8B3D;
+    --color-sultaf-gold-light: #E3C68A;
+    --color-sultaf-gold-dark: #966923;
+
+    /* ===== Terracotta ===== */
+    --color-sultaf-clay: #C1613D;
+    --color-sultaf-clay-dark: #93452A;
+
+    /* ===== Warm Neutrals ===== */
+    --color-sultaf-cream: #FBF4EA;
+    --color-sultaf-cream-soft: #FFF5E8;
+    --color-sultaf-cream-dark: #F0E4D3;
+    --color-sultaf-ink: #2B1B1B;
+    --color-sultaf-muted: #8A7566;
+    --color-sultaf-border: #E4D3BE;
+
+    /* ===== Functional Colors ===== */
+    --color-sultaf-success: #4F7A52;
+    --color-sultaf-success-soft: #EAF1E7;
+    --color-sultaf-warning: #BF8B3D;
+    --color-sultaf-warning-soft: #FAF0DD;
+    --color-sultaf-danger: #B23A2E;
+    --color-sultaf-danger-soft: #FBEAE7;
+
+    --font-serif: "Playfair Display", Georgia, serif;
+    --font-sans: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+    body {
+        @apply bg-sultaf-cream text-sultaf-ink font-sans antialiased;
+    }
+    h1, h2, h3 { @apply font-serif; }
+}
+
+@layer components {
+    /* ===== Tekstur signature — kisi geometris sangat tipis ===== */
+    .bg-sultaf-pattern {
+        background-color: var(--color-sultaf-cream);
+        background-image:
+            repeating-linear-gradient(45deg, rgba(122,22,32,0.035) 0, rgba(122,22,32,0.035) 1px, transparent 1px, transparent 24px),
+            repeating-linear-gradient(-45deg, rgba(122,22,32,0.035) 0, rgba(122,22,32,0.035) 1px, transparent 1px, transparent 24px);
+    }
+    /* Versi gelap dari tekstur yang sama, dipakai di sidebar maroon-dark */
+    .bg-sultaf-pattern-dark {
+        background-image:
+            repeating-linear-gradient(45deg, rgba(255,255,255,0.035) 0, rgba(255,255,255,0.035) 1px, transparent 1px, transparent 24px),
+            repeating-linear-gradient(-45deg, rgba(255,255,255,0.035) 0, rgba(255,255,255,0.035) 1px, transparent 1px, transparent 24px);
+    }
+
+    .geometric-divider {
+        height: 16px;
+        width: 100%;
+        background-image: repeating-linear-gradient(
+            45deg,
+            #7A1620 0,
+            #7A1620 8px,
+            transparent 0,
+            transparent 16px
+        );
+        opacity: 0.12;
+    }
+
+    .btn-primary {
+        @apply bg-sultaf-maroon hover:bg-sultaf-maroon-dark text-white font-semibold
+               tracking-wide text-sm py-3.5 px-6 rounded-xl transition-all shadow-md
+               hover:shadow-lg inline-flex items-center justify-center gap-2;
+    }
+
+    .btn-gold {
+        @apply bg-sultaf-gold hover:bg-sultaf-gold-dark text-white font-semibold
+               tracking-wide text-sm py-3 px-5 rounded-xl transition-all shadow-md
+               hover:shadow-lg inline-flex items-center justify-center gap-2;
+    }
+
+    .btn-whatsapp {
+        @apply bg-sultaf-maroon hover:bg-sultaf-maroon-dark text-white font-bold
+               tracking-wide text-sm py-3.5 px-6 rounded-xl transition-all shadow-md
+               hover:shadow-lg inline-flex items-center justify-center gap-2 border border-sultaf-gold/40;
+    }
+
+    .btn-secondary {
+        @apply bg-white hover:bg-sultaf-cream-soft text-sultaf-ink border border-sultaf-border
+               font-semibold text-sm py-3.5 px-6 rounded-xl transition-all shadow-sm
+               hover:border-sultaf-maroon hover:text-sultaf-maroon inline-flex items-center justify-center gap-2;
+    }
+
+    .input-field {
+        @apply w-full border border-sultaf-border bg-sultaf-cream/60 rounded-lg px-4 py-3
+               text-sultaf-ink placeholder:text-sultaf-muted focus:outline-none
+               focus:ring-2 focus:ring-sultaf-maroon/30 focus:border-sultaf-maroon;
+    }
+
+    .staff-card {
+        @apply bg-white rounded-2xl border border-sultaf-border/70 shadow-sm shadow-sultaf-maroon/[0.03];
+    }
+    .staff-label {
+        @apply text-xs text-sultaf-muted uppercase tracking-wide font-medium;
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
