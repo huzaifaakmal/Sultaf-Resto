@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
-
 use App\Models\TransaksiPenjualan;
-use App\Services\RmsIntegrationService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -13,32 +11,18 @@ class OrderController extends Controller
 {
     public function index(): View
     {
-        $orders = TransaksiPenjualan::where('user_id', Auth::id())
-            ->latest('tgl_transaksi')
+        $orders = TransaksiPenjualan::where('id_user', Auth::user()->id_user)
+            ->latest()
             ->get();
 
         return view('orders.index', compact('orders'));
     }
 
-    public function show(TransaksiPenjualan $transaksi, RmsIntegrationService $rms): View
+    public function show(TransaksiPenjualan $transaksi): View
     {
-        $transaksi->load('items.menu');
+        abort_unless($transaksi->id_user === Auth::user()->id_user, 403);
 
-        // Real-time synchronization of order status with RMS
-        if ($rmsData = $rms->fetchOrderStatusFromRms($transaksi->kode_transaksi)) {
-            $updated = false;
-            if (!empty($rmsData['status_pesanan']) && $transaksi->status_pesanan !== $rmsData['status_pesanan']) {
-                $transaksi->status_pesanan = $rmsData['status_pesanan'];
-                $updated = true;
-            }
-            if (!empty($rmsData['status_pembayaran']) && $transaksi->status_pembayaran !== $rmsData['status_pembayaran']) {
-                $transaksi->status_pembayaran = $rmsData['status_pembayaran'];
-                $updated = true;
-            }
-            if ($updated) {
-                $transaksi->save();
-            }
-        }
+        $transaksi->load('detail_transaksi.menu');
 
         return view('orders.show', compact('transaksi'));
     }

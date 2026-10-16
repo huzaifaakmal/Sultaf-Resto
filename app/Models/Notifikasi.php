@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -20,5 +21,11 @@ class Notifikasi extends Model
     public function member(): BelongsTo
     {
         return $this->belongsTo(Member::class, 'id_member', 'id_member');
+    }
+
+    // The message text is stored in `id_pesan`; views read it as `pesan`.
+    protected function pesan(): Attribute
+    {
+        return Attribute::get(fn () => $this->id_pesan);
     }
 }

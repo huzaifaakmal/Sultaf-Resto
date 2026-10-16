@@ -74,14 +74,40 @@ The menu fields were named three different ways (`nama_menu`/`harga` in the migr
 
 Local result: `php artisan test` passes (5 tests; PHP 8.4, after `composer install` and `npm run build`).
 
+## 10. Web app runs end to end
+
+Every page was exercised with real logins (admin, owner, kasir, dapur, customer): public pages, cart, checkout (details -> payment -> finish), orders, rewards, profile, POS checkout and receipt, payment verification, kitchen status, menu availability, admin menu/benefit/promo CRUD. All return 200 or the expected redirect.
+
+Backend changes made for this:
+- **Admin:** `Admin/MenuController` rewritten for the `menus` table (full CRUD, accepts both form field-name variants); new `Admin/BenefitController` (stored in `promos`) and `Admin/PromoController` (promo messages stored in `notifikasis`); dashboard shows real stats; routes added with `Route::resource`.
+- **Customer checkout:** `CheckoutController` now writes `transaksi_penjualans` + `detail_transaksis` (same as the POS), member discount comes from `promos`. The calls to the missing `AuditLog`, `TransaksiItem`, `Benefit` and `RmsIntegrationService` were removed. `OrderController` and `NotificationController` use the real tables.
+- **Models:** `User::member()`, `isMember()` and `points`; read-only aliases on `TransaksiPenjualan`, `DetailTransaksi`, `Promo` and `Notifikasi` so existing views work unchanged.
+- **Layouts:** the missing `x-layouts.owner`, `x-layouts.kasir` and `x-layouts.dapur` components were added, modelled on the admin layout (sidebar + header + flash messages). This is the only Blade addition; no existing view was edited.
+- **Seeders:** `DatabaseSeeder` now also seeds categories and 8 sample menus (photos copied to the public disk).
+- **Tests:** `tests/Feature/RolePagesTest.php` (public pages, every role's pages, role middleware, guest redirect). `php artisan test`: 9 tests pass.
+
+### Run it locally
+
+```bash
+composer install && npm install && npm run build
+cp .env.example .env && php artisan key:generate
+touch database/database.sqlite
+# in .env: CACHE_STORE=file and QUEUE_CONNECTION=sync (no cache/jobs tables exist)
+php artisan migrate --seed
+php artisan storage:link
+php artisan serve
+```
+
+Seeded logins (password `password123`): `admin@sultaf.com`, `owner@sultaf.com`, `kasir@sultaf.com`, `dapur@sultaf.com`. Customers register on `/register`.
+
 ## Still open
 
 - **Test coverage is minimal.** Only a few tests exist; there are none for the role-based features yet.
-- **Classes still missing** (not on any branch in the repo, probably on a teammate's machine, so ask them to commit): models `Benefit`, `PromoMessage`, `AuditLog`, `TransaksiItem`; services `RmsIntegrationService`, `JwtAuthService`, `PaymentGatewayService`, `OtaChannelSyncService`. Customer checkout, notifications, customer orders and everything under `Api/*` depend on them.
+- **Classes still missing** (not on any branch in the repo, probably on a teammate's machine): models `Benefit`, `PromoMessage`, `AuditLog`, `TransaksiItem`; services `RmsIntegrationService`, `JwtAuthService`, `PaymentGatewayService`, `OtaChannelSyncService`. Only the `Api/*` controllers (not routed) still depend on them.
 - **Two menu schemas coexist:** `menu_items` + `categories` (old) and `menus` (new). `Admin/MenuController` and `MenuSeeder` still use the old one.
-- **Layouts** `x-layouts.owner`, `x-layouts.kasir` and `x-layouts.dapur` are used by views but do not exist yet.
+- **Layouts** `owner`, `kasir` and `dapur` are simple placeholders based on the admin layout; the frontend owner may want to restyle them.
 - **API routes** (`Api/*`) are not registered because no JWT package is in `composer.json`.
-- **Admin routes** for benefits and promos are called by views, but those controllers do not exist.
+- **Admin menu form** (`_form.blade.php`) still posts old field names (e.g. `category_id`, `spice_level`); the controller maps what it can and ignores the rest.
 
 ---
 

@@ -4,10 +4,9 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 
-use App\Models\AuditLog;
-use App\Models\Benefit;
+use App\Models\DetailTransaksi;
 use App\Models\Menu;
-use App\Models\TransaksiItem;
+use App\Models\Promo;
 use App\Models\TransaksiPenjualan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -94,60 +93,32 @@ class CheckoutController extends Controller
 
             $transaksi = TransaksiPenjualan::create([
                 'kode_transaksi'    => 'SLT-' . strtoupper(Str::random(6)),
-                'user_id'           => Auth::id(),
+                'id_user'           => Auth::user()?->id_user,
                 'nama_pelanggan'    => $payment['nama_pelanggan'] ?? null,
                 'no_telepon'        => $payment['no_telepon'] ?? null,
                 'tipe_pesanan'      => $details['tipe_pesanan'] ?? 'takeaway',
-                'nomor_meja'        => $details['nomor_meja'] ?? null,
-                'subtotal'          => $subtotal,
-                'pajak'             => $tax,
-                'service_charge'    => 0,
-                'diskon_member'     => $diskon,
-                'total_harga'       => $total,
+                'no_meja'           => isset($details['nomor_meja']) ? (string) $details['nomor_meja'] : null,
+                'diskon'            => $diskon,
+                'total_bayar'       => $total,
                 'status_pesanan'    => 'pending',
                 'status_pembayaran' => $isAutomated ? 'terverifikasi' : 'menunggu',
-                'metode_pembayaran' => $payment['metode_pembayaran'] ?? null,
+                'metode_pembayaran' => $payment['metode_pembayaran'] ?? 'cash',
                 'bukti_pembayaran'  => $payment['bukti_pembayaran'] ?? null,
                 'catatan'           => $details['catatan'] ?? null,
-                'tgl_transaksi'     => now(),
             ]);
 
             foreach ($items as $item) {
-                TransaksiItem::create([
-                    'transaksi_penjualan_id' => $transaksi->id,
-                    'menu_id'                => $item['menu']->id,
-                    'qty'                    => $item['qty'],
-                    'harga_satuan'           => $item['menu']->harga_makanan,
+                DetailTransaksi::create([
+                    'id_transaksi' => $transaksi->id_transaksi,
+                    'id_menu'      => $item['menu']->id_menu,
+                    'jumlah'       => $item['qty'],
+                    'harga_satuan' => $item['menu']->harga,
+                    'subtotal'     => $item['qty'] * $item['menu']->harga,
                 ]);
             }
 
-            // Record audit log entry within the same database transaction
-            AuditLog::create([
-                'tenant_id'      => $transaksi->tenant_id ?? 1,
-                'user_id'        => Auth::id(),
-                'action'         => 'ORDER_CREATED',
-                'auditable_type' => TransaksiPenjualan::class,
-                'auditable_id'   => $transaksi->id,
-                'old_values'     => null,
-                'new_values'     => [
-                    'kode_transaksi'    => $transaksi->kode_transaksi,
-                    'total_harga'       => $transaksi->total_harga,
-                    'metode_pembayaran' => $transaksi->metode_pembayaran,
-                    'status_pembayaran' => $transaksi->status_pembayaran,
-                ],
-                'ip_address'     => request()->ip(),
-                'user_agent'     => request()->userAgent(),
-            ]);
-
             return $transaksi;
         });
-
-        // Notify or sync order to external RMS if configured
-        try {
-            app(\App\Services\RmsIntegrationService::class)->syncOrderToRms($transaksi);
-        } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('RMS auto-sync skipped: ' . $e->getMessage());
-        }
 
         session()->forget(['cart', 'checkout.details', 'checkout.payment']);
         return redirect()->route('checkout.finish', $transaksi);
@@ -155,7 +126,7 @@ class CheckoutController extends Controller
 
     public function finish(TransaksiPenjualan $transaksi): View
     {
-        $transaksi->load('items.menu');
+        $transaksi->load('detail_transaksi.menu');
         return view('checkout.finish', compact('transaksi'));
     }
 
@@ -196,20 +167,17 @@ class CheckoutController extends Controller
             return ['menu' => $menu, 'qty' => $qty];
         })->filter()->values();
 
-        $subtotal = $items->sum(fn ($i) => $i['qty'] * (float) $i['menu']->harga_makanan);
+        $subtotal = $items->sum(fn ($i) => $i['qty'] * (float) $i['menu']->harga);
         $tax      = round($subtotal * 0.10);
 
         $diskon = 0;
         if (Auth::check() && Auth::user()->isMember()) {
-            $benefit = Benefit::where('aktif', true)
-                ->where('tipe', 'diskon')
-                ->where('poin_dibutuhkan', '<=', Auth::user()->points)
-                ->orderByDesc('poin_dibutuhkan')
+            $promo = Promo::where('minimal_poin', '<=', Auth::user()->points)
+                ->orderByDesc('minimal_poin')
                 ->first();
 
-            if ($benefit) {
-                $diskon = round($subtotal * ((float) $benefit->nilai_diskon / 100));
-            }
+            // `potongan_harga` is a fixed discount in rupiah.
+            $diskon = $promo ? min((float) $promo->potongan_harga, $subtotal) : 0;
         }
 
         $total = $subtotal + $tax - $diskon;

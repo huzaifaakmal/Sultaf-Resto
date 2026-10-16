@@ -53,5 +53,7 @@ class DatabaseSeeder extends Seeder
                 'role' => 'dapur',
             ]
         );
+
+        $this->call([CategorySeeder::class, MenuSeeder::class]);
     }
 }

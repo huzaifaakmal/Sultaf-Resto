@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -30,5 +31,42 @@ class TransaksiPenjualan extends Model
     public function detail_transaksi(): HasMany
     {
         return $this->hasMany(DetailTransaksi::class, 'id_transaksi', 'id_transaksi');
+    }
+
+    // Aliases for the field names some views still use. The table columns are the source of truth.
+
+    public function items(): HasMany
+    {
+        return $this->detail_transaksi();
+    }
+
+    protected function totalHarga(): Attribute
+    {
+        return Attribute::get(fn () => $this->total_bayar);
+    }
+
+    protected function nomorMeja(): Attribute
+    {
+        return Attribute::get(fn () => $this->no_meja);
+    }
+
+    protected function tglTransaksi(): Attribute
+    {
+        return Attribute::get(fn () => $this->created_at);
+    }
+
+    protected function diskonMember(): Attribute
+    {
+        return Attribute::get(fn () => $this->diskon);
+    }
+
+    protected function subtotal(): Attribute
+    {
+        return Attribute::get(fn () => (int) $this->detail_transaksi->sum('subtotal'));
+    }
+
+    protected function pajak(): Attribute
+    {
+        return Attribute::get(fn () => max(0, (int) $this->total_bayar + (int) $this->diskon - $this->subtotal));
     }
 }

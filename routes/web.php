@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\BenefitController as AdminBenefitController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\MenuController as AdminMenuController;
+use App\Http\Controllers\Admin\PromoController as AdminPromoController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\CheckoutController;
@@ -79,10 +81,9 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/menu', [AdminMenuController::class, 'index'])->name('menu.index');
-    Route::post('/menu', [AdminMenuController::class, 'store'])->name('menu.store');
-    Route::put('/menu/{id}', [AdminMenuController::class, 'update'])->name('menu.update');
-    Route::delete('/menu/{id}', [AdminMenuController::class, 'destroy'])->name('menu.destroy');
+    Route::resource('menu', AdminMenuController::class)->except('show');
+    Route::resource('benefit', AdminBenefitController::class)->except('show');
+    Route::resource('promo', AdminPromoController::class)->only(['index', 'create', 'store', 'destroy']);
 });
 
 // ---- Owner ----

@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -28,4 +30,19 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function member(): HasOne
+    {
+        return $this->hasOne(Member::class, 'id_user', 'id_user');
+    }
+
+    public function isMember(): bool
+    {
+        return $this->member !== null;
+    }
+
+    protected function points(): Attribute
+    {
+        return Attribute::get(fn () => (int) ($this->member?->total_poin ?? 0));
+    }
 }
