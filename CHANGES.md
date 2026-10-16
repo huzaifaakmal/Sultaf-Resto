@@ -105,6 +105,12 @@ Seeded logins (password `password123`): `admin@sultaf.com`, `owner@sultaf.com`, 
 - `.env.example`: `CACHE_STORE=file`, `QUEUE_CONNECTION=sync` and `APP_NAME` so a fresh clone works without manual edits.
 - Removed `AdminUserSeeder` (never called, duplicated the admin in `DatabaseSeeder`, and stored a plain-text password).
 
+## 12. Admin menu form verified
+
+The admin menu forms were submitted for real (browser-style requests and `tests/Feature/AdminMenuFormTest.php`): create with photo, validation errors, edit, delete. The create form's extra fields (`category_id`, `harga_modal`, `spice_level`) are accepted and ignored because `menus` has no such columns. `php artisan test`: 12 tests pass.
+
+The API (`Api/*`) has **not** been tested: it is not routed and depends on missing classes (see below).
+
 ## Still open
 
 - **Test coverage is minimal.** Only a few tests exist; there are none for the role-based features yet.
