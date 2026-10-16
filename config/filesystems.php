@@ -1,6 +1,7 @@
 <?php
 
 return [
+<<<<<<< HEAD
 
     /*
     |--------------------------------------------------------------------------
@@ -27,24 +28,39 @@ return [
     | Supported drivers: "local", "ftp", "sftp", "s3"
     |
     */
+=======
+    // Default Filesystem Disk
+
+    'default' => env('FILESYSTEM_DRIVER', 'local'),
+    // Filesystem Disks
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
 
     'disks' => [
 
         'local' => [
             'driver' => 'local',
+<<<<<<< HEAD
             'root' => storage_path('app/private'),
             'serve' => true,
             'throw' => false,
             'report' => false,
+=======
+            'root' => storage_path('app'),
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
         ],
 
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
+<<<<<<< HEAD
             'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
+=======
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
         ],
 
         's3' => [
@@ -56,6 +72,7 @@ return [
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+<<<<<<< HEAD
             'throw' => false,
             'report' => false,
         ],
@@ -72,6 +89,12 @@ return [
     | the locations of the links and the values should be their targets.
     |
     */
+=======
+        ],
+
+    ],
+    // Symbolic Links
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
 
     'links' => [
         public_path('storage') => storage_path('app/public'),

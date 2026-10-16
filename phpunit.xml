@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<<<<<<< HEAD
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+=======
+         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
          bootstrap="vendor/autoload.php"
          colors="true"
 >
     <testsuites>
         <testsuite name="Unit">
+<<<<<<< HEAD
             <directory>tests/Unit</directory>
         </testsuite>
         <testsuite name="Feature">
@@ -32,5 +37,28 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+=======
+            <directory suffix="Test.php">./tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Feature">
+            <directory suffix="Test.php">./tests/Feature</directory>
+        </testsuite>
+    </testsuites>
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">./app</directory>
+        </include>
+    </coverage>
+    <php>
+        <server name="APP_ENV" value="testing"/>
+        <server name="BCRYPT_ROUNDS" value="4"/>
+        <server name="CACHE_DRIVER" value="array"/>
+        <!-- <server name="DB_CONNECTION" value="sqlite"/> -->
+        <!-- <server name="DB_DATABASE" value=":memory:"/> -->
+        <server name="MAIL_MAILER" value="array"/>
+        <server name="QUEUE_CONNECTION" value="sync"/>
+        <server name="SESSION_DRIVER" value="array"/>
+        <server name="TELESCOPE_ENABLED" value="false"/>
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
     </php>
 </phpunit>

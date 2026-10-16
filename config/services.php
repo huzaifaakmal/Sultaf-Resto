@@ -1,6 +1,7 @@
 <?php
 
 return [
+<<<<<<< HEAD
 
     /*
     |--------------------------------------------------------------------------
@@ -20,6 +21,18 @@ return [
 
     'resend' => [
         'key' => env('RESEND_API_KEY'),
+=======
+    // Third Party Services
+
+    'mailgun' => [
+        'domain' => env('MAILGUN_DOMAIN'),
+        'secret' => env('MAILGUN_SECRET'),
+        'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
+    ],
+
+    'postmark' => [
+        'token' => env('POSTMARK_TOKEN'),
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
     ],
 
     'ses' => [
@@ -28,6 +41,7 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+<<<<<<< HEAD
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
@@ -35,4 +49,6 @@ return [
         ],
     ],
 
+=======
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
 ];

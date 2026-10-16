@@ -3,6 +3,7 @@
 use Illuminate\Support\Str;
 
 return [
+<<<<<<< HEAD
 
     /*
     |--------------------------------------------------------------------------
@@ -34,6 +35,19 @@ return [
 
     'stores' => [
 
+=======
+    // Default Cache Store
+
+    'default' => env('CACHE_DRIVER', 'file'),
+    // Cache Stores
+
+    'stores' => [
+
+        'apc' => [
+            'driver' => 'apc',
+        ],
+
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
         'array' => [
             'driver' => 'array',
             'serialize' => false,
@@ -41,15 +55,22 @@ return [
 
         'database' => [
             'driver' => 'database',
+<<<<<<< HEAD
             'connection' => env('DB_CACHE_CONNECTION'),
             'table' => env('DB_CACHE_TABLE', 'cache'),
             'lock_connection' => env('DB_CACHE_LOCK_CONNECTION'),
             'lock_table' => env('DB_CACHE_LOCK_TABLE'),
+=======
+            'table' => 'cache',
+            'connection' => null,
+            'lock_connection' => null,
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
         ],
 
         'file' => [
             'driver' => 'file',
             'path' => storage_path('framework/cache/data'),
+<<<<<<< HEAD
             'lock_path' => storage_path('framework/cache/locks'),
         ],
 
@@ -57,6 +78,8 @@ return [
             'driver' => 'storage',
             'disk' => env('CACHE_STORAGE_DISK'),
             'path' => env('CACHE_STORAGE_PATH', 'framework/cache/data'),
+=======
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
         ],
 
         'memcached' => [
@@ -80,8 +103,13 @@ return [
 
         'redis' => [
             'driver' => 'redis',
+<<<<<<< HEAD
             'connection' => env('REDIS_CACHE_CONNECTION', 'cache'),
             'lock_connection' => env('REDIS_CACHE_LOCK_CONNECTION', 'default'),
+=======
+            'connection' => 'cache',
+            'lock_connection' => 'default',
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
         ],
 
         'dynamodb' => [
@@ -97,6 +125,7 @@ return [
             'driver' => 'octane',
         ],
 
+<<<<<<< HEAD
         'failover' => [
             'driver' => 'failover',
             'stores' => [
@@ -132,5 +161,11 @@ return [
     */
 
     'serializable_classes' => false,
+=======
+    ],
+    // Cache Key Prefix
+
+    'prefix' => env('CACHE_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_cache'),
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
 
 ];

@@ -1,6 +1,7 @@
 <?php
 
 return [
+<<<<<<< HEAD
 
     /*
     |--------------------------------------------------------------------------
@@ -47,12 +48,30 @@ return [
             'password' => env('MAIL_PASSWORD'),
             'timeout' => null,
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+=======
+    // Default Mailer
+
+    'default' => env('MAIL_MAILER', 'smtp'),
+    // Mailer Configurations
+
+    'mailers' => [
+        'smtp' => [
+            'transport' => 'smtp',
+            'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
+            'port' => env('MAIL_PORT', 587),
+            'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+            'username' => env('MAIL_USERNAME'),
+            'password' => env('MAIL_PASSWORD'),
+            'timeout' => null,
+            'auth_mode' => null,
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
         ],
 
         'ses' => [
             'transport' => 'ses',
         ],
 
+<<<<<<< HEAD
         'postmark' => [
             'transport' => 'postmark',
             // 'message_stream_id' => env('POSTMARK_MESSAGE_STREAM_ID'),
@@ -63,11 +82,23 @@ return [
 
         'resend' => [
             'transport' => 'resend',
+=======
+        'mailgun' => [
+            'transport' => 'mailgun',
+        ],
+
+        'postmark' => [
+            'transport' => 'postmark',
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
         ],
 
         'sendmail' => [
             'transport' => 'sendmail',
+<<<<<<< HEAD
             'path' => env('MAIL_SENDMAIL_PATH', '/usr/sbin/sendmail -bs -i'),
+=======
+            'path' => env('MAIL_SENDMAIL_PATH', '/usr/sbin/sendmail -t -i'),
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
         ],
 
         'log' => [
@@ -85,6 +116,7 @@ return [
                 'smtp',
                 'log',
             ],
+<<<<<<< HEAD
             'retry_after' => 60,
         ],
 
@@ -113,6 +145,24 @@ return [
     'from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
+=======
+        ],
+    ],
+    // Global "From" Address
+
+    'from' => [
+        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
+        'name' => env('MAIL_FROM_NAME', 'Example'),
+    ],
+    // Markdown Mail Settings
+
+    'markdown' => [
+        'theme' => 'default',
+
+        'paths' => [
+            resource_path('views/vendor/mail'),
+        ],
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
     ],
 
 ];

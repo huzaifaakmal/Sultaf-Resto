@@ -3,6 +3,7 @@
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
+<<<<<<< HEAD
 use Monolog\Processor\PsrLogMessageProcessor;
 
 return [
@@ -55,6 +56,22 @@ return [
         'stack' => [
             'driver' => 'stack',
             'channels' => explode(',', (string) env('LOG_STACK', 'single')),
+=======
+
+return [
+    // Default Log Channel
+
+    'default' => env('LOG_CHANNEL', 'stack'),
+    // Deprecations Log Channel
+
+    'deprecations' => env('LOG_DEPRECATIONS_CHANNEL', 'null'),
+    // Log Channels
+
+    'channels' => [
+        'stack' => [
+            'driver' => 'stack',
+            'channels' => ['single'],
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
             'ignore_exceptions' => false,
         ],
 
@@ -62,13 +79,17 @@ return [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
+<<<<<<< HEAD
             'replace_placeholders' => true,
+=======
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
         ],
 
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
+<<<<<<< HEAD
             'max_files' => env('LOG_DAILY_DAYS', 14),
             'replace_placeholders' => true,
         ],
@@ -79,20 +100,30 @@ return [
             'level' => env('LOG_LEVEL', 'debug'),
             'max_files' => 3,
             'replace_placeholders' => true,
+=======
+            'days' => 14,
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
         ],
 
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),
+<<<<<<< HEAD
             'username' => env('LOG_SLACK_USERNAME', env('APP_NAME', 'Laravel')),
             'emoji' => env('LOG_SLACK_EMOJI', ':boom:'),
             'level' => env('LOG_LEVEL', 'critical'),
             'replace_placeholders' => true,
+=======
+            'username' => 'Laravel Log',
+            'emoji' => ':boom:',
+            'level' => env('LOG_LEVEL', 'critical'),
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
         ],
 
         'papertrail' => [
             'driver' => 'monolog',
             'level' => env('LOG_LEVEL', 'debug'),
+<<<<<<< HEAD
             'handler' => env('LOG_PAPERTRAIL_HANDLER', SyslogUdpHandler::class),
             'handler_with' => [
                 'host' => env('PAPERTRAIL_URL'),
@@ -100,30 +131,50 @@ return [
                 'connectionString' => 'tls://'.env('PAPERTRAIL_URL').':'.env('PAPERTRAIL_PORT'),
             ],
             'processors' => [PsrLogMessageProcessor::class],
+=======
+            'handler' => SyslogUdpHandler::class,
+            'handler_with' => [
+                'host' => env('PAPERTRAIL_URL'),
+                'port' => env('PAPERTRAIL_PORT'),
+            ],
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
         ],
 
         'stderr' => [
             'driver' => 'monolog',
             'level' => env('LOG_LEVEL', 'debug'),
             'handler' => StreamHandler::class,
+<<<<<<< HEAD
             'handler_with' => [
                 'stream' => 'php://stderr',
             ],
             'formatter' => env('LOG_STDERR_FORMATTER'),
             'processors' => [PsrLogMessageProcessor::class],
+=======
+            'formatter' => env('LOG_STDERR_FORMATTER'),
+            'with' => [
+                'stream' => 'php://stderr',
+            ],
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
         ],
 
         'syslog' => [
             'driver' => 'syslog',
             'level' => env('LOG_LEVEL', 'debug'),
+<<<<<<< HEAD
             'facility' => env('LOG_SYSLOG_FACILITY', LOG_USER),
             'replace_placeholders' => true,
+=======
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
         ],
 
         'errorlog' => [
             'driver' => 'errorlog',
             'level' => env('LOG_LEVEL', 'debug'),
+<<<<<<< HEAD
             'replace_placeholders' => true,
+=======
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
         ],
 
         'null' => [
@@ -134,7 +185,10 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+<<<<<<< HEAD
 
+=======
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
     ],
 
 ];

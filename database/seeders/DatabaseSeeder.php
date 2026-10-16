@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+<<<<<<< HEAD
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -55,3 +56,22 @@ class DatabaseSeeder extends Seeder
         );
     }
 }
+=======
+
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $this->call([
+            CategorySeeder::class,
+            AdminUserSeeder::class,
+            MenuSeeder::class,
+        ]);
+    }
+}
+>>>>>>> fda411f0813b9c7104ad865582a079f3a6221844
