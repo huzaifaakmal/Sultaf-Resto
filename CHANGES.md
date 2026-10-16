@@ -56,10 +56,18 @@ Folder `Admin/DashboardController`, `Owner/`, `Kasir/`, `Dapur/`, `Auth/`, dan `
 - `tests/Feature/ExampleTest` memakai `RefreshDatabase`.
 - Hasil lokal: `php artisan test` -> 2 test lulus (PHP 8.4, setelah `composer install` dan `npm run build`).
 
+## 8. Model & service yang ditambahkan
+
+Dibuat sesuai nama kolom di migrasi (tanpa mengubah skema):
+- Model: `TransaksiPenjualan`, `DetailTransaksi`, `Member`, `Promo`, `Notifikasi`.
+- `App\Services\MemberPointService::awardFromTransaksi()`: menambah poin (1 poin per Rp 10.000) ke member yang nomor HP-nya cocok; mengembalikan `null` bila nomor kosong atau belum terdaftar.
+- Test: `tests/Feature/MemberPointServiceTest.php`. Hasil `php artisan test`: 4 test lulus.
+
 ## Belum dikerjakan / perlu diketahui
 
 - **Test baru sebatas bawaan.** Hanya 2 test contoh; belum ada test untuk fitur per peran.
-- **Kelas belum ada**, dipakai oleh beberapa controller: model `TransaksiPenjualan`, `DetailTransaksi`, `Benefit`, `PromoMessage`, `AuditLog`; service `RmsIntegrationService`, `JwtAuthService`, `MemberPointService`, `PaymentGatewayService`, `OtaChannelSyncService`. Halaman kasir, dapur, checkout, dan pesanan bergantung padanya.
+- **Kelas masih belum ada** (tidak ada di branch mana pun di repo, kemungkinan di komputer anggota tim; minta di-commit): model `Benefit`, `PromoMessage`, `AuditLog`, `TransaksiItem`; service `RmsIntegrationService`, `JwtAuthService`, `PaymentGatewayService`, `OtaChannelSyncService`. Halaman checkout pelanggan, notifikasi, pesanan pelanggan, serta seluruh `Api/*` bergantung padanya.
+- **Nama kolom tidak konsisten antar bagian**: migrasi `menus` memakai `nama_menu`/`harga`, model `Menu` memakai `name`/`price`/`habis`, sebagian view memakai `nama_makanan`. Perlu disepakati satu skema menu oleh tim backend dan frontend.
 - **Dua skema menu** berdampingan: `menu_items` + `categories` (lama) dan `menus` (baru).
 - **Layout** `x-layouts.owner`, `x-layouts.kasir`, `x-layouts.dapur` dipakai view tetapi belum dibuat.
 - **Route API** (`Api/*`) belum didaftarkan, karena paket JWT belum ada di `composer.json`.
