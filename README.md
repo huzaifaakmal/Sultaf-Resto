@@ -36,7 +36,7 @@ php artisan storage:link              # serves uploaded and seeded menu photos
 php artisan serve                     # http://localhost:8000
 ```
 
-In `.env`, set `CACHE_STORE=file` and `QUEUE_CONNECTION=sync` (the project has no cache/jobs tables). For frontend development run `npm run dev` instead of `npm run build`.
+`.env.example` already uses the `file` cache and `sync` queue (the project has no cache/jobs tables). For frontend development run `npm run dev` instead of `npm run build`.
 
 ### Seeded accounts
 

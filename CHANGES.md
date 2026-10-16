@@ -92,13 +92,18 @@ Backend changes made for this:
 composer install && npm install && npm run build
 cp .env.example .env && php artisan key:generate
 touch database/database.sqlite
-# in .env: CACHE_STORE=file and QUEUE_CONNECTION=sync (no cache/jobs tables exist)
+# .env.example already sets CACHE_STORE=file and QUEUE_CONNECTION=sync (no cache/jobs tables exist)
 php artisan migrate --seed
 php artisan storage:link
 php artisan serve
 ```
 
 Seeded logins (password `password123`): `admin@sultaf.com`, `owner@sultaf.com`, `kasir@sultaf.com`, `dapur@sultaf.com`. Customers register on `/register`.
+
+## 11. Small fixes
+
+- `.env.example`: `CACHE_STORE=file`, `QUEUE_CONNECTION=sync` and `APP_NAME` so a fresh clone works without manual edits.
+- Removed `AdminUserSeeder` (never called, duplicated the admin in `DatabaseSeeder`, and stored a plain-text password).
 
 ## Still open
 
